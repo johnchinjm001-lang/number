@@ -186,8 +186,8 @@ svg{overflow:visible;display:block}
   </div>
 </div>
 
+  <div class="wm" style="padding-bottom:16px;text-align:center;width:100%">© Qylvia Wong · AetherCode</div>
 </div><!-- end export-target -->
-<div class="wm">© Qylvia Wong · AetherCode</div>
 <button class="export-btn" id="export-btn" onclick="doExport()">⬇ 导出图片 Export</button>
 <div id="export-status"></div>
 
@@ -530,7 +530,7 @@ function doExport(){
   const target=document.getElementById('export-target');
 
   html2canvas(target,{
-    scale:2,
+    scale:5,
     useCORS:true,
     backgroundColor:'#e8eaf4',
     scrollX:0,
@@ -538,7 +538,9 @@ function doExport(){
     x:0,
     y:0,
     width:target.offsetWidth,
-    height:target.offsetHeight,
+    height:target.scrollHeight,
+    windowWidth:target.offsetWidth,
+    windowHeight:target.scrollHeight,
     logging:false,
     onclone:(doc)=>{
       // Hide btn/status in cloned doc
@@ -580,7 +582,7 @@ function doExport(){
     status.style.visibility='visible';
     status.textContent='';
 
-    const dataURL=canvas.toDataURL('image/png');
+    const dataURL=canvas.toDataURL('image/png',1.0);
 
     // Always show image overlay — works for both mobile (long press save) and desktop
     const overlayImg=document.getElementById('overlay-img');
