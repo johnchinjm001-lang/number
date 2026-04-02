@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>生命数字</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#e8eaf4;
+  background-image:
+    radial-gradient(ellipse at 15% 8%,rgba(42,63,143,0.08) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 92%,rgba(196,149,24,0.06) 0%,transparent 55%);
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+  display:flex;flex-direction:column;align-items:center;
+  padding:18px 8px 20px;
+}
+.hdr{text-align:center;margin-bottom:11px}
+.hdr-sub{font-size:7.5px;letter-spacing:5px;color:#b07d20;text-transform:uppercase;margin-bottom:4px}
+.hdr-title{font-size:22px;font-weight:300;letter-spacing:5px;color:#1a2550;font-family:Georgia,serif}
+
+.inp-card{
+  display:flex;gap:9px;background:#fff;
+  border:1px solid #ced4ec;border-radius:14px;
+  padding:11px 15px;margin-bottom:11px;
+  box-shadow:0 2px 12px rgba(26,37,80,0.07);
+}
+.inp-group{text-align:center}
+.inp-lbl{font-size:7.5px;color:#8a94b8;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+input{
+  text-align:center;font-size:20px;font-weight:700;color:#1a2550;
+  background:#f3f4fb;border:1.5px solid #cad0e8;
+  border-radius:9px;outline:none;letter-spacing:2px;
+  font-family:Georgia,serif;-webkit-appearance:none;padding:7px 2px;
+  transition:border-color .2s,background .2s;
+}
+input.filled{background:#fdf7e8;border-color:#c49518}
+.inp-dd,.inp-mm{width:52px}
+.inp-yyyy{width:78px}
+
+.page{display:flex;flex-direction:column;align-items:center;width:100%}
+
+
+
+.svg-wrap{width:100%;max-width:520px}
+svg{overflow:visible;display:block}
+
+.sections{width:100%;max-width:520px;display:flex;flex-direction:column;gap:6px;margin-top:-10px}
+.top3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.sc{background:#fff;border:1px solid #ced4ec;border-radius:11px;padding:9px 12px;
+    box-shadow:0 1px 6px rgba(26,37,80,0.04)}
+.sl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:4px}
+.sv{font-size:27px;font-weight:700;font-family:Georgia,serif;line-height:1.1}
+
+.wx-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:4px}
+.wx-col{display:flex;flex-direction:column;align-items:center;gap:3px}
+.wx-nm{font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:1px}
+.dot{width:11px;height:11px;border-radius:50%;background:rgba(26,37,80,0.1);border:1px solid rgba(26,37,80,0.18)}
+.dot.on{background:currentColor;border-color:currentColor}
+
+.miss-row{display:flex;gap:10px}
+.miss-col{flex:1}
+.miss-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{width:24px;height:24px;border-radius:50%;border:1.5px solid;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;font-family:Georgia,serif}
+
+
+
+.wm{margin-top:10px;font-size:8px;letter-spacing:3px;color:rgba(26,37,80,0.18);text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <p class="hdr-sub">Numerology · 数字命理</p>
+  <h1 class="hdr-title">生 命 数 字</h1>
+</div>
+
+<div class="inp-card">
+  <div class="inp-group">
+    <div class="inp-lbl">Day 日</div>
+    <input class="inp-dd" id="i-dd" type="text" inputmode="numeric" maxlength="2" placeholder="DD" autocomplete="off"/>
+  </div>
+  <div class="inp-group">
+    <div class="inp-lbl">Month 月</div>
+    <input class="inp-mm" id="i-mm" type="text" inputmode="numeric" maxlength="2" placeholder="MM" autocomplete="off"/>
+  </div>
+  <div class="inp-group">
+    <div class="inp-lbl">Year 年</div>
+    <input class="inp-yyyy" id="i-yyyy" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY" autocomplete="off"/>
+  </div>
+</div>
+
+<!-- PAGE 1: Birth -->
+<div class="page active" id="page-birth">
+  <div class="svg-wrap">
+    <svg id="diagram-birth" viewBox="0 0 520 530" width="100%"></svg>
+  </div>
+  <div class="sections" id="sections-birth" style="display:none">
+    <div class="top3">
+      <div class="sc">
+        <div class="sl" style="color:#b07d20">主性格</div>
+        <div class="sv" id="sv-life" style="color:#c49518"></div>
+      </div>
+      <div class="sc">
+        <div class="sl" style="color:#0a7a70">潜意识</div>
+        <div class="sv" id="sv-qy" style="color:#0f9688"></div>
+      </div>
+      <div class="sc">
+        <div class="sl" style="color:#2a3f8f">内心</div>
+        <div class="sv" id="sv-nx" style="color:#3a52b8"></div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sl" style="color:#6a3a9a;margin-bottom:6px">五行健康</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+        <span style="font-size:9px;color:#6a6a8a">金 = 1, 6</span>
+        <span style="font-size:9px;color:#6a6a8a">木 = 4, 9</span>
+        <span style="font-size:9px;color:#6a6a8a">水 = 2, 7</span>
+        <span style="font-size:9px;color:#6a6a8a">火 = 3, 8</span>
+        <span style="font-size:9px;color:#6a6a8a">土 = 5</span>
+      </div>
+      <div class="wx-grid" id="wx-grid-birth"></div>
+    </div>
+    <div class="sc">
+      <div class="miss-row">
+        <div class="miss-col">
+          <div class="miss-lbl" style="color:#2a3f8f">内缺数</div>
+          <div class="chips" id="chips-in-birth"></div>
+        </div>
+        <div class="miss-col">
+          <div class="miss-lbl" style="color:#0a7a70">外缺数</div>
+          <div class="chips" id="chips-out-birth"></div>
+        </div>
+      </div>
+    </div>
+    <!-- 2026 流年 section -->
+    <div class="sc" id="fate-section" style="padding:12px;display:none">
+      <div class="sl" style="color:#b07d20;margin-bottom:6px">2026 流年数字</div>
+      <svg id="diagram-fate" viewBox="0 0 520 530" width="100%" style="display:block"></svg>
+      <p id="fate-note" style="font-size:10px;color:#8a94b8;text-align:center;margin-top:4px;letter-spacing:1px"></p>
+    </div>
+  </div>
+</div>
+
+<div class="wm">© Qylvia Wong</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+const NAVY='#2a3f8f',NAVY2='#3a52b8',GOLD='#c49518',GOLD2='#d4a828';
+const TEAL='#0f9688',TEALFILL='rgba(15,150,136,0.82)';
+const DIM='#c4cce0',MUTED='#8a94b8',RED='#b03030';
+const GRID_C='rgba(42,63,143,0.22)';
+
+// ── REDUCE: NO master numbers, always 1-9, only exception: 0+0=5 ──
+function red(v){
+  v=+v;
+  if(v<1)return v; // 0 handled by caller
+  if(v<=9)return v;
+  let s=Math.floor(v/10)%10+(v%10);
+  if(s<=9&&s>=1)return s;
+  // recurse once more
+  return Math.floor(s/10)%10+(s%10)||1;
+}
+function sr(a,b){
+  if(a===''||b==='')return'';
+  return red(+a+ +b);
+}
+function wxOf(n){
+  n=+n;
+  if(n===1||n===6)return'金';
+  if(n===4||n===9)return'木';
+  if(n===2||n===7)return'水';
+  if(n===3||n===8)return'火';
+  if(n===5)return'土';
+  return'';
+}
+
+function calcAll(dd,mm,yyyy){
+  if(!dd||!mm||!yyyy||String(yyyy).length<4)return null;
+  const d1=dd<10?0:Math.floor(dd/10),d2=dd%10;
+  const m1=mm<10?0:Math.floor(mm/10),m2=mm%10;
+  const y1=Math.floor(yyyy/1000),y2=Math.floor(yyyy/100)%10;
+  const y3=Math.floor(yyyy/10)%10,y4=yyyy%10;
+
+  // lv2 row (A=DD, B=MM, C=YYhi, D=YYlo)
+  const A=sr(d1,d2),B=sr(m1,m2),C=sr(y1,y2);
+  const D=(y3+y4===0)?5:sr(y3,y4);
+  // lv3 row (P=A+B, Q=C+D)
+  const P=sr(A,B),Q=sr(C,D);
+  // apex
+  const life=sr(P,Q);
+
+  // Side nodes: U=A+P, V=B+P → S=U+V   |   W=C+Q, X=D+Q → T=W+X
+  const Uv=sr(A,P),Vv=sr(B,P),Sv=sr(Uv,Vv);
+  const Wv=sr(C,Q),Xv=sr(D,Q),Tv=sr(Wv,Xv);
+
+  // Bottom nodes:
+  // BOT_RIGHT = P(lv3 left) + life
+  // BOT_LEFT  = Q(lv3 right) + life
+  // BOT_RES   = BOT_LEFT + BOT_RIGHT
+  const botR=sr(P,life);  // right node below
+  const botL=sr(Q,life);  // left node below
+  const botRes=sr(botL,botR);
+
+  // 潜意识 = A + D + life
+  const subcon=(A!==''&&D!==''&&life!=='') ? red(+A+ +D+ +life) : '';
+  // 内心 = life * 2
+  const inner=(life!=='') ? red(+life*2) : '';
+
+  // 五行 — 7 numbers: A(lv2-1), B(lv2-2), P(lv3-1), Q(lv3-2→second), life, botL, botR
+  const wxNums=[A,B,P,Q,life,botL,botR].filter(x=>x!=='').map(Number);
+  const wxCounts={金:0,木:0,水:0,火:0,土:0};
+  wxNums.forEach(n=>{const w=wxOf(n);if(w)wxCounts[w]++;});
+
+  const insideSet=new Set([A,B,C,D,P,Q,life].filter(x=>x!==''&&+x>=1&&+x<=9).map(Number));
+  const missIn=[1,2,3,4,5,6,7,8,9].filter(x=>!insideSet.has(x));
+  const outsideSet=new Set([Uv,Vv,Sv,Wv,Xv,Tv,botL,botR,botRes].filter(x=>x!==''&&+x>=1&&+x<=9).map(Number));
+  const missOut=[1,2,3,4,5,6,7,8,9].filter(x=>!outsideSet.has(x));
+  const both=missIn.filter(x=>missOut.includes(x));
+
+  return{A,B,C,D,P,Q,life,Uv,Vv,Sv,Wv,Xv,Tv,botL,botR,botRes,
+    subcon,inner,wxCounts,missIn,missOut,both};
+}
+
+// ── SVG helpers ──
+function el(tag,attrs,txt){
+  const e=document.createElementNS(NS,tag);
+  for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);
+  if(txt!==undefined)e.textContent=txt;
+  return e;
+}
+function node(svg,cx,cy,r,val,fill,stk,fc,fs,glow){
+  const empty=val===''||val===null||val===undefined;
+  if(glow&&!empty){
+    svg.appendChild(el('circle',{cx,cy,r:r+10,fill:glow,opacity:'0.14'}));
+    svg.appendChild(el('circle',{cx,cy,r:r+5,fill:glow,opacity:'0.10'}));
+  }
+  svg.appendChild(el('circle',{cx,cy,r,
+    fill:empty?'rgba(196,204,226,0.22)':fill,
+    stroke:empty?DIM:(stk||fill),'stroke-width':empty?'1':'2.5'}));
+  const t=el('text',{x:cx,y:cy,'text-anchor':'middle','dominant-baseline':'central',
+    'font-size':String(fs),'font-weight':'700','font-family':'Georgia,serif',
+    fill:empty?DIM:fc});
+  t.textContent=empty?'':String(val); svg.appendChild(t);
+}
+function line(svg,x1,y1,x2,y2,c,w){
+  svg.appendChild(el('line',{x1,y1,x2,y2,stroke:c||DIM,'stroke-width':w||'1.1'}));
+}
+function stxt(svg,x,y,s,fill,fs,anchor,ls){
+  const t=el('text',{x,y,'text-anchor':anchor||'middle','dominant-baseline':'central',
+    'font-size':String(fs||11),'font-family':'Georgia,serif','font-weight':'400',
+    fill:fill||MUTED,'letter-spacing':ls||'0'});
+  t.textContent=s; svg.appendChild(t);
+}
+function triX(y,TL,TR,AP){
+  const t=(y-TL.y)/(AP.y-TL.y);
+  return{lx:TL.x+t*(AP.x-TL.x),rx:TR.x+t*(AP.x-TR.x)};
+}
+
+// ── DRAW TRIANGLE (reusable for both pages) ──
+function drawTriangle(svgId, rv, isFate){
+  const svg=document.getElementById(svgId);
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+
+  const VW=520,VH=530;
+  svg.setAttribute('viewBox',`0 0 ${VW} ${VH}`);
+
+  const TL={x:52,y:44},TR={x:468,y:44},AP={x:260,y:296};
+  const t1=0.23,t2=0.60;
+
+  const[n1,n2,n3,n4]=[0.12,0.38,0.62,0.88].map(f=>{
+    const xl=TL.x+t1*(AP.x-TL.x),xr=TR.x+t1*(AP.x-TR.x);
+    return{x:xl+f*(xr-xl),y:TL.y+t1*(AP.y-TL.y)};
+  });
+  const[n5,n6]=[0.27,0.73].map(f=>{
+    const xl=TL.x+t2*(AP.x-TL.x),xr=TR.x+t2*(AP.x-TR.x);
+    return{x:xl+f*(xr-xl),y:TL.y+t2*(AP.y-TL.y)};
+  });
+  const apex={x:AP.x,y:AP.y};
+
+  const row2_y=n1.y+32,row3_y=n5.y+32;
+  const{lx:l2,rx:r2}=triX(row2_y,TL,TR,AP);
+  const{lx:l3,rx:r3}=triX(row3_y,TL,TR,AP);
+
+  // Defs
+  const defs=el('defs',{});
+  const sfx=isFate?'f':'b';
+  const gid='tg'+sfx;
+  const g=el('linearGradient',{id:gid,x1:'0.5',y1:'0',x2:'0.5',y2:'1'});
+  g.appendChild(el('stop',{offset:'0%','stop-color':isFate?'rgba(180,90,10,0.06)':'rgba(58,82,184,0.06)'}));
+  g.appendChild(el('stop',{offset:'100%','stop-color':'rgba(42,63,143,0.02)'}));
+  defs.appendChild(g); svg.appendChild(defs);
+
+  // Triangle
+  svg.appendChild(el('polygon',{
+    points:`${TL.x},${TL.y} ${TR.x},${TR.y} ${AP.x},${AP.y}`,
+    fill:`url(#${gid})`,stroke:isFate?'#8a6020':NAVY2,'stroke-width':'2.2','stroke-linejoin':'round'}));
+
+  // Grid lines
+  const gc=isFate?'rgba(138,96,32,0.22)':GRID_C;
+  line(svg,l2,row2_y,r2,row2_y,gc,'1.2');
+  line(svg,l3,row3_y,r3,row3_y,gc,'1.2');
+  [1/4,2/4,3/4].forEach(f=>{
+    const tx_top=TL.x+f*(TR.x-TL.x);
+    const{lx:lB,rx:rB}=triX(row2_y,TL,TR,AP);
+    line(svg,tx_top,TL.y,lB+f*(rB-lB),row2_y,gc,'1.2');
+  });
+  {
+    const{lx:lT,rx:rT}=triX(row2_y,TL,TR,AP);
+    const{lx:lB,rx:rB}=triX(row3_y,TL,TR,AP);
+    line(svg,(lT+rT)/2,row2_y,(lB+rB)/2,row3_y,gc,'1.2');
+  }
+
+  // Labels
+  [{x:(n1.x+n2.x)/2,l:'日'},{x:(n2.x+n3.x)/2,l:'月'},{x:(n3.x+n4.x)/2,l:'年'}].forEach(({x,l})=>
+    stxt(svg,x,TL.y-12,l,MUTED,11,'middle','1'));
+
+  // Side nodes
+  const SIDE_Y=n5.y;
+  const{lx:triL}=triX(SIDE_Y,TL,TR,AP);
+  const{rx:triR}=triX(SIDE_Y,TL,TR,AP);
+  const NODE_R=19,GAP=20;
+  const Vx=triL-GAP-NODE_R,Ux=Vx-NODE_R*2-6,UVy=SIDE_Y;
+  const Sx=(Ux+Vx)/2,Sy=UVy+NODE_R*2+10;
+  const Wx=triR+GAP+NODE_R,Xx=Wx+NODE_R*2+6,WXy=SIDE_Y;
+  const Tx2=(Wx+Xx)/2,Ty2=WXy+NODE_R*2+10;
+
+  const tc=isFate?'rgba(180,120,20,0.9)':'rgba(15,150,136,0.82)';
+  const ts=isFate?'#a07018':TEAL;
+
+  // Side connector lines
+  line(svg,(Ux+Vx)/2,UVy+NODE_R,Sx,Sy-NODE_R-2,ts,'1');
+  line(svg,(Wx+Xx)/2,WXy+NODE_R,Tx2,Ty2-NODE_R-2,ts,'1');
+
+  // Bottom group
+  const BAR1_Y=apex.y+14;
+  const BOT_L={x:apex.x-62,y:apex.y+44};
+  const BOT_R={x:apex.x+62,y:apex.y+44};
+  const BAR2_Y=BOT_L.y+36;
+  const BOT_RES={x:apex.x,y:BOT_L.y+60};
+  const BC='rgba(42,63,143,0.28)';
+  line(svg,BOT_L.x-10,BAR1_Y,BOT_R.x+10,BAR1_Y,BC,'0.9');
+  line(svg,BOT_L.x,BAR1_Y,BOT_L.x,BOT_L.y-20,BC,'1');
+  line(svg,BOT_R.x,BAR1_Y,BOT_R.x,BOT_R.y-20,BC,'1');
+  line(svg,BOT_L.x,BOT_L.y+20,BOT_L.x,BAR2_Y,BC,'1');
+  line(svg,BOT_R.x,BOT_R.y+20,BOT_R.x,BAR2_Y,BC,'1');
+  line(svg,BOT_L.x-10,BAR2_Y,BOT_R.x+10,BAR2_Y,BC,'0.9');
+
+  // 主性格 label
+  if(rv.life!=='')
+    stxt(svg,apex.x,BAR1_Y-6,'主性格',isFate?GOLD2:GOLD,8,'middle','3');
+
+  // lv2 nodes
+  const nb=isFate?'rgba(160,112,24,0.88)':('rgba(58,82,184,0.83)');
+  const ns=isFate?GOLD2:NAVY2;
+  [[n1,rv.A],[n2,rv.B],[n3,rv.C],[n4,rv.D]].forEach(([p,v])=>
+    node(svg,p.x,p.y,21,v,nb,ns,'#fff',16,false));
+
+  // lv3 nodes
+  [[n5,rv.P],[n6,rv.Q]].forEach(([p,v])=>
+    node(svg,p.x,p.y,25,v,'rgba(212,168,40,0.88)',GOLD2,'#fff',18,false));
+
+  // apex
+  const aFill='rgba(212,168,40,0.90)',aStk=GOLD;
+  node(svg,apex.x,apex.y,35,rv.life,aFill,aStk,'#fff',23,aFill);
+
+  // Side nodes
+  node(svg,Ux,UVy,NODE_R,rv.Uv,tc,ts,'#fff',13,false);
+  node(svg,Vx,UVy,NODE_R,rv.Vv,tc,ts,'#fff',13,false);
+  node(svg,Sx,Sy,NODE_R+2,rv.Sv,isFate?'rgba(180,120,20,0.1)':'rgba(15,150,136,0.10)',ts,ts,14,false);
+
+  node(svg,Wx,WXy,NODE_R,rv.Wv,tc,ts,'#fff',13,false);
+  node(svg,Xx,WXy,NODE_R,rv.Xv,tc,ts,'#fff',13,false);
+  node(svg,Tx2,Ty2,NODE_R+2,rv.Tv,isFate?'rgba(180,120,20,0.1)':'rgba(15,150,136,0.10)',ts,ts,14,false);
+
+  // Bottom nodes — teal left/right, gold result
+  node(svg,BOT_L.x,BOT_L.y,20,rv.botL,tc,ts,'#fff',14,false);
+  node(svg,BOT_R.x,BOT_R.y,20,rv.botR,tc,ts,'#fff',14,false);
+  node(svg,BOT_RES.x,BOT_RES.y,23,rv.botRes,tc,ts,'#fff',16,false);
+}
+
+// ── MAIN RENDER ──
+function render(){
+  ['i-dd','i-mm','i-yyyy'].forEach(id=>{
+    const inp=document.getElementById(id);
+    inp.value=inp.value.replace(/\D/g,'').slice(0,+inp.maxLength);
+    inp.classList.toggle('filled',inp.value.length===+inp.maxLength);
+  });
+  const ddS=document.getElementById('i-dd').value;
+  const mmS=document.getElementById('i-mm').value;
+  const yyyyS=document.getElementById('i-yyyy').value;
+  const dd=+ddS||null,mm=+mmS||null,yyyy=+yyyyS||null;
+  const valid=dd&&mm&&yyyy&&yyyyS.length===4;
+
+  // Birth triangle
+  const resBirth=valid?calcAll(dd,mm,yyyy):null;
+  const rb=resBirth||{A:'',B:'',C:'',D:'',P:'',Q:'',life:'',Uv:'',Vv:'',Sv:'',Wv:'',Xv:'',Tv:'',botL:'',botR:'',botRes:''};
+  drawTriangle('diagram-birth',rb,false);
+
+  // Fate triangle (same DD/MM, year=2026)
+  const resFate=valid?calcAll(dd,mm,2026):null;
+  const rf=resFate||{A:'',B:'',C:'',D:'',P:'',Q:'',life:'',Uv:'',Vv:'',Sv:'',Wv:'',Xv:'',Tv:'',botL:'',botR:'',botRes:''};
+  const fateSection=document.getElementById('fate-section');
+  if(resFate){
+    fateSection.style.display='block';
+    drawTriangle('diagram-fate',rf,true);
+    document.getElementById('fate-note').textContent=`${ddS}/${mmS}/2026 · 流年数字`;
+  } else {
+    fateSection.style.display='none';
+  }
+
+  // Sections (birth only)
+  const sec=document.getElementById('sections-birth');
+  if(!resBirth){sec.style.display='none';return;}
+  sec.style.display='flex';
+
+  document.getElementById('sv-life').textContent=rb.life;
+  document.getElementById('sv-qy').textContent=resBirth.subcon;
+  document.getElementById('sv-nx').textContent=resBirth.inner;
+
+  // 五行
+  const wxOrder=['金','木','水','火','土'];
+  const wxColor={金:'#b07020',木:'#357a28',水:'#2055b0',火:'#b83020',土:'#806018'};
+  const wxGrid=document.getElementById('wx-grid-birth');
+  wxGrid.innerHTML='';
+  wxOrder.forEach(w=>{
+    const cnt=resBirth.wxCounts[w]||0;
+    const col=document.createElement('div');col.className='wx-col';
+    const nm=document.createElement('div');nm.className='wx-nm';
+    nm.style.color=wxColor[w];nm.textContent=w;col.appendChild(nm);
+    for(let i=0;i<7;i++){
+      const d=document.createElement('div');
+      d.className='dot'+(i<cnt?' on':'');
+      if(i<cnt)d.style.color=wxColor[w];
+      col.appendChild(d);
+    }
+    wxGrid.appendChild(col);
+  });
+
+  // Chips
+  function chip(n,both){
+    const d=document.createElement('div');d.className='chip';
+    if(both)d.style.cssText=`color:${RED};border-color:${RED};background:rgba(176,48,48,0.08);box-shadow:0 0 0 2px rgba(176,48,48,0.16)`;
+    else d.style.cssText=`color:${NAVY};border-color:${DIM};background:rgba(42,63,143,0.05)`;
+    d.textContent=n;return d;
+  }
+  function fillC(id,arr,both){
+    const e=document.getElementById(id);e.innerHTML='';
+    if(!arr.length)e.innerHTML='<span style="font-size:11px;color:#0f9688;font-weight:600">无</span>';
+    else arr.forEach(n=>e.appendChild(chip(n,both.includes(n))));
+  }
+  fillC('chips-in-birth',resBirth.missIn,resBirth.both);
+  fillC('chips-out-birth',resBirth.missOut,resBirth.both);
+}
+
+['i-dd','i-mm','i-yyyy'].forEach(id=>
+  document.getElementById(id).addEventListener('input',render));
+render();
+</script>
+</body>
+</html>
