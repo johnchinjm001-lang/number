@@ -71,7 +71,7 @@ svg{overflow:visible;display:block}
 
 
 
-.wm{margin-top:10px;font-size:8px;letter-spacing:3px;color:rgba(26,37,80,0.18);text-transform:uppercase}
+.wm{margin-top:10px;font-size:12px;letter-spacing:3px;color:rgba(26,37,80,0.42);text-transform:uppercase;font-family:Georgia,serif}
 /* Image preview overlay */
 #img-overlay{
   display:none;position:fixed;top:0;left:0;width:100%;height:100%;
@@ -177,19 +177,27 @@ svg{overflow:visible;display:block}
         </div>
       </div>
     </div>
-    <!-- 2026 流年 section -->
+    <!-- 流年 section -->
     <div class="sc" id="fate-section" style="padding:12px;display:none">
-      <div class="sl" style="color:#b07d20;margin-bottom:6px">2026 流年数字</div>
-      <svg id="diagram-fate" viewBox="0 0 520 530" width="100%" style="display:block"></svg>
-      <p id="fate-note" style="font-size:10px;color:#8a94b8;text-align:center;margin-top:4px;letter-spacing:1px"></p>
-      <div class="miss-row" style="margin-top:8px">
-        <div class="miss-col">
-          <div class="miss-lbl" style="color:#2a3f8f">内缺数</div>
-          <div class="chips" id="chips-in-fate"></div>
-        </div>
-        <div class="miss-col">
-          <div class="miss-lbl" style="color:#0a7a70">外缺数</div>
-          <div class="chips" id="chips-out-fate"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span class="sl" style="color:#b07d20;margin-bottom:0">流年数字</span>
+        <input id="fate-yr" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY" autocomplete="off"
+          style="width:68px;font-size:14px;font-weight:700;color:#1a2550;background:#fdf7e8;
+            border:1.5px solid #c49518;border-radius:8px;outline:none;text-align:center;
+            padding:4px 3px;font-family:Georgia,serif;letter-spacing:1px;-webkit-appearance:none"/>
+      </div>
+      <div id="fate-diagram-wrap" style="display:none">
+        <svg id="diagram-fate" viewBox="0 0 520 530" width="100%" style="display:block"></svg>
+        <p id="fate-note" style="font-size:10px;color:#8a94b8;text-align:center;margin-top:4px;letter-spacing:1px"></p>
+        <div class="miss-row" style="margin-top:8px">
+          <div class="miss-col">
+            <div class="miss-lbl" style="color:#2a3f8f">内缺数</div>
+            <div class="chips" id="chips-in-fate"></div>
+          </div>
+          <div class="miss-col">
+            <div class="miss-lbl" style="color:#0a7a70">外缺数</div>
+            <div class="chips" id="chips-out-fate"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -454,16 +462,21 @@ function render(){
   const rb=resBirth||{A:'',B:'',C:'',D:'',P:'',Q:'',life:'',Uv:'',Vv:'',Sv:'',Wv:'',Xv:'',Tv:'',botL:'',botR:'',botRes:''};
   drawTriangle('diagram-birth',rb,false);
 
-  // Fate triangle (same DD/MM, year=2026)
-  const resFate=valid?calcAll(dd,mm,2026):null;
+  // Fate triangle — user-supplied year
+  const fateYrS=document.getElementById('fate-yr').value.replace(/\D/g,'').slice(0,4);
+  document.getElementById('fate-yr').value=fateYrS;
+  const fateYr=fateYrS.length===4?+fateYrS:null;
+  const resFate=(valid&&fateYr)?calcAll(dd,mm,fateYr):null;
   const rf=resFate||{A:'',B:'',C:'',D:'',P:'',Q:'',life:'',Uv:'',Vv:'',Sv:'',Wv:'',Xv:'',Tv:'',botL:'',botR:'',botRes:''};
   const fateSection=document.getElementById('fate-section');
+  const fateDiagramWrap=document.getElementById('fate-diagram-wrap');
+  fateSection.style.display=valid?'block':'none';
   if(resFate){
-    fateSection.style.display='block';
+    fateDiagramWrap.style.display='block';
     drawTriangle('diagram-fate',rf,true);
-    document.getElementById('fate-note').textContent=`${ddS}/${mmS}/2026 · 流年数字`;
+    document.getElementById('fate-note').textContent=`${ddS}/${mmS}/${fateYrS} · 流年数字`;
   } else {
-    fateSection.style.display='none';
+    fateDiagramWrap.style.display='none';
   }
 
   // Sections (birth only)
@@ -519,7 +532,7 @@ function render(){
   }
 }
 
-['i-dd','i-mm','i-yyyy'].forEach(id=>
+['i-dd','i-mm','i-yyyy','fate-yr'].forEach(id=>
   document.getElementById(id).addEventListener('input',render));
 render();
 </script>
