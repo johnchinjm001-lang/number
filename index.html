@@ -189,6 +189,17 @@ svg{overflow:visible;display:block}
       <div id="fate-diagram-wrap" style="display:none">
         <svg id="diagram-fate" viewBox="0 0 520 530" width="100%" style="display:block"></svg>
         <p id="fate-note" style="font-size:10px;color:#8a94b8;text-align:center;margin-top:4px;letter-spacing:1px"></p>
+        <div style="margin-top:8px">
+          <div class="sl" style="color:#6a3a9a;margin-bottom:5px">五行健康</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+            <span style="font-size:9px;color:#6a6a8a">金 = 1, 6</span>
+            <span style="font-size:9px;color:#6a6a8a">木 = 4, 9</span>
+            <span style="font-size:9px;color:#6a6a8a">水 = 2, 7</span>
+            <span style="font-size:9px;color:#6a6a8a">火 = 3, 8</span>
+            <span style="font-size:9px;color:#6a6a8a">土 = 5</span>
+          </div>
+          <div class="wx-grid" id="wx-grid-fate"></div>
+        </div>
         <div class="miss-row" style="margin-top:8px">
           <div class="miss-col">
             <div class="miss-lbl" style="color:#2a3f8f">内缺数</div>
@@ -529,6 +540,21 @@ function render(){
   if(resFate){
     fillC('chips-in-fate',resFate.missIn,resFate.both);
     fillC('chips-out-fate',resFate.missOut,resFate.both);
+    const wxGridFate=document.getElementById('wx-grid-fate');
+    wxGridFate.innerHTML='';
+    wxOrder.forEach(w=>{
+      const cnt=resFate.wxCounts[w]||0;
+      const col=document.createElement('div');col.className='wx-col';
+      const nm=document.createElement('div');nm.className='wx-nm';
+      nm.style.color=wxColor[w];nm.textContent=w;col.appendChild(nm);
+      for(let i=0;i<7;i++){
+        const d=document.createElement('div');
+        d.className='dot'+(i<cnt?' on':'');
+        if(i<cnt)d.style.color=wxColor[w];
+        col.appendChild(d);
+      }
+      wxGridFate.appendChild(col);
+    });
   }
 }
 
